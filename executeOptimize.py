@@ -17,21 +17,23 @@ def getData(cluster, kData):
     end_times = [3600 * 24] * len(dem)
     return loc, dem, ca, labs, depot, start_times, end_times
     
-
-def empUp(searchLimit = 30000, horizion = int(6.4 * 3600), timePerTicket = 3*60, walkingSpeed = 1.34, timePerCar = 1 * 60, \
-          overheadPerBlock = 2*60):    
+depot = 0
+labs = []
+ca = []
+def empUp(locations, demands, start_times, end_times, searchLimit = 30000, horizion = int(6.4 * 3600), timePerTicket = 3*60, walkingSpeed = 1.34, timePerCar = 1 * 60, \
+          overheadPerBlock = 2*60, depot=depot):    
     noEmps = 0
     solByCar = None
-    while solByCar is None:
-        try:
+    while solByCar is None and noEmps < 50:
+#        try:
             noEmps += 1
             print("trying # of emplyoes : " + str(noEmps))
-            solByCar, assignment = optimizer(locations=loc, demands=dem, start_times=start_times, end_times=end_times, \
+            solByCar, assignment = optimizer(locations, demands, start_times, end_times, \
          num_vehicles=noEmps, search_time_limit = searchLimit,\
         horizon = horizion, time_per_demand_unit = timePerTicket, speed = walkingSpeed, VehicleCapacity = 999999,\
         depot = depot, time_per_car_unit=timePerCar, labs=labs, cars=ca, blockOverhead = overheadPerBlock)
-        except:
-            pass
+#        except:
+#            pass
     return solByCar, noEmps
 
 def empUpByCluster(nClusters, kData, searchLimit = 30000, horizion = int(6.4 * 3600), timePerTicket = 3*60, \
@@ -39,6 +41,6 @@ def empUpByCluster(nClusters, kData, searchLimit = 30000, horizion = int(6.4 * 3
      for k in range(nClusters):
         print("Starting cluster {} of {}".format(k, nClusters))
         loc, dem, ca, labs, depot, start_times, end_times = getData(k, kData)
-        solution, noEmps = empUp()
+        solution, noEmps = empUp(loc, dem, start_times, end_times, depot=depot)
         kData[k].update({'solution': solution, 'empsNeeded': noEmps})
         return kDatademand
