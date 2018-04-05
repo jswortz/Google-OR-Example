@@ -13,6 +13,9 @@ def getcsv(filename):
     megaCluster = []
     streetSide = []
     streetName = []
+    carTime = []
+    carTime = []
+
     dataFolder = "data"
     with open(os.path.join(dataFolder, filename), 'rb') as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
@@ -22,6 +25,7 @@ def getcsv(filename):
                     firstLine = False
                 else:
                     latLong = []
+                    carTime.append(float(row[28]))
                     latLong.append(float(row[23]))
                     latLong.append(float(row[24]))
                     locations.append(latLong)
@@ -36,4 +40,4 @@ def getcsv(filename):
 
     start_times =  [0] * len(demands)
     end_times = [3600 * 24] * len(start_times)
-    return locations, labels, demands, cars, megaCluster, streetSide, streetName, start_times, end_times
+    return locations, labels, demands, cars, megaCluster, streetSide, streetName, start_times, end_times, carTime
